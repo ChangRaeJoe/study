@@ -1,17 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
-#define element int
-typedef struct a
-{
-	element data;
-	struct a* next;
-}Queue;
-
-typedef struct
-{
-	Queue* front;
-	Queue* rear;
-}QueueLink;
+#include "queue.h"
 
 QueueLink* Queuelink_init()
 {
@@ -74,32 +63,13 @@ void Queue_free(QueueLink* ql)
 {
 	Queue* tmp = ql->front;
 	//ql이 모두 비어있을때 그냥 free
-	if(tmp == NULL)
+	
+	while(tmp != NULL)
 	{
-		puts("QueueLink free success\n");
-		free(ql);
-		return;
+		tmp = tmp->next;
+		Queue_pop(ql);
 	}
+
+	free(ql);
 	//ql이 들어잇을때 다 free해줒고 마지막에 ql free해줌
-}
-int main()
-{
-	QueueLink* ql = NULL;
-
-	ql = Queuelink_init();
-	Queue_push(ql, 5);
-	Queue_push(ql, 65);
-	Queue_push(ql, 6);
-	Queue_push(ql, 9);
-
-	Queue_print(ql);
-	Queue_pop(ql);
-	Queue_pop(ql);
-	Queue_pop(ql);
-	Queue_pop(ql);
-	Queue_pop(ql);
-
-	Queue_free(ql);
-
-	return 0;
 }

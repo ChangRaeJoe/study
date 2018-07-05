@@ -40,9 +40,10 @@ void Queue_push(QueueLink* ql, element data)
 	}
 }
 
-void Queue_pop(QueueLink* ql)
+int Queue_pop(QueueLink* ql)
 {
 	Queue* tmp = ql->front;
+	int tmp_data = 0;
 	if(tmp == NULL)
 	{
 		printf("Queue empty\n");
@@ -56,7 +57,9 @@ void Queue_pop(QueueLink* ql)
 			ql->front = NULL;
 		}
 		printf("pop: %d\n", tmp->data);
+		tmp_data = tmp->data;
 		free(tmp);
+		return tmp_data;
 	}
 }
 void Queue_free(QueueLink* ql)
@@ -69,7 +72,7 @@ void Queue_free(QueueLink* ql)
 		tmp = tmp->next;
 		Queue_pop(ql);
 	}
-
+	printf("queue_free function\n");
 	free(ql);
 	//ql이 들어잇을때 다 free해줒고 마지막에 ql free해줌
 }

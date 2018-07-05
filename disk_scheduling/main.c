@@ -11,8 +11,9 @@ void look(QueueLink* ql, int cpos, int size);
 void menu(QueueLink* ql, int* size);
 void bubble(int* tmp_arr, const int init, const int last, int asc); //if asc==1 then small->big
 
-const int direction = 1;
-
+//0: cylinder 0(MIN)
+//1: cylinder MAX
+const int direction = 0;
 int main()
 {
 	QueueLink* ql = NULL;
@@ -171,13 +172,19 @@ void bubble(int* tmp_arr, const int init, const int last, int asc) //if asc==1 t
 
 void scan(QueueLink* ql, int cpos, int size)
 {
-	int tmp_arr[7] = {0, };
+	int* tmp_arr = (int*)malloc(sizeof(int) * (size+1));	//+1 is endpoint
 	Queue* tmp = ql->front;
 	int next = 0;
 	int tmp_data = 0;
 	int i = 0, j = 0;
 	int index=0, min=MAX, minus = 0;
 	int cyl_index = 0;
+	size = size+1;
+	for(i=0; i< size;i++)
+	{
+		tmp_arr[i] = 0;
+	}
+	i=0;
 	while(tmp != NULL && size>i)		//array save
 	{
 		next = Queue_pop(ql);
@@ -218,10 +225,64 @@ void scan(QueueLink* ql, int cpos, int size)
 	printf("\n");
 	fcfs(ql, CUR);						//fcfs algorithm executing
 
-
+	free(tmp_arr);
 }
 
 void look(QueueLink* ql, int cpos, int size)
 {
-	printf("look 입니다.");
+	int* tmp_arr = (int*)malloc(sizeof(int) * (size));	//+1 is endpoint
+	Queue* tmp = ql->front;
+	int next = 0;
+	int tmp_data = 0;
+	int i = 0, j = 0;
+	int index=0, min=MAX, minus = 0;
+	int cyl_index = 0;
+
+	for(i=0; i< size;i++)
+	{
+		tmp_arr[i] = 0;
+	}
+	i=0;
+	while(tmp != NULL && size>i)		//array save
+	{
+		next = Queue_pop(ql);
+		tmp_arr[i] = next;
+		tmp = tmp->next;
+		i++;
+	}
+	if(direction == 0)	bubble(tmp_arr, 0, size, 1);
+	else bubble(tmp_arr, 0, size, 0);
+	
+	for(i=0; i<size; i++)				//current cylinder index
+	{
+		if(direction==0 && CUR > tmp_arr[i])
+		{
+			cyl_index = i;
+		}
+		else if(direction==1 && CUR < tmp_arr[i])
+		{
+			cyl_index = i;
+		}
+		
+	}
+
+	if(direction == 0){
+		bubble(tmp_arr, 0, cyl_index+1, 0);		//<=cyl_index	
+		bubble(tmp_arr, cyl_index+1, size, 1);	//>cyl_index
+	}
+	else{
+		bubble(tmp_arr, 0, cyl_index+1, 1);
+		bubble(tmp_arr, cyl_index+1, size, 0);
+	}
+
+	for(i=0; i<size; i++)				//큐에 push
+	{
+		printf(" %d ", tmp_arr[i]);
+		Queue_push(ql, tmp_arr[i]);
+	}
+	printf("\n");
+	fcfs(ql, CUR);						//fcfs algorithm executing
+
+	free(tmp_arr);
+
 }
